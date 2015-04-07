@@ -20,7 +20,7 @@ namespace NORM.Mark1
 
             foreach (var d in data2)
             {
-                Console.WriteLine(d.ProcessingTime);
+                Console.WriteLine(d.ProcessTime);
             }
 
             Console.WriteLine("Time elapsed: "+profiler.ElapsedMilliseconds+" ms");

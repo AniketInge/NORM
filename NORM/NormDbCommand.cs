@@ -3,6 +3,8 @@ using System.ComponentModel.Composition;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Reflection;
+using NORM.Attributes;
 using NORM.Helpers;
 
 namespace NORM
@@ -12,6 +14,18 @@ namespace NORM
     {
         public NormSqlServerDbCommand() { }
 
+        private string GetConnectionString<T>()
+        {
+            var normEntityAttr = typeof (T).GetCustomAttribute<NormEntityAttribute>();
+            if (normEntityAttr != null)
+            {
+                if (!string.IsNullOrEmpty(normEntityAttr.ConnectionString))
+                {
+                    return normEntityAttr.ConnectionString;
+                }
+            }
+            return ConnectionString;
+        }
         /// <summary>
         /// Executes a command and returns the number of rows affected. 
         /// </summary>
@@ -49,7 +63,7 @@ namespace NORM
         public T ExecuteQuery<T>(string command, object parameters) where T : class, new()
         {
             var dt = new DataTable();
-            using (var connection = new SqlConnection(ConnectionString))
+            using (var connection = new SqlConnection(GetConnectionString<T>()))
             {
                 using (var cmd = new SqlCommand(command, connection))
                 {
@@ -80,7 +94,7 @@ namespace NORM
         public T ExecuteStoredProc<T>(string procName, object parameters) where T :class, new()
         {
             var dt = new DataTable();
-            using (var connection = new SqlConnection(ConnectionString))
+            using (var connection = new SqlConnection(GetConnectionString<T>()))
             {
                 using (var cmd = new SqlCommand(procName, connection))
                 {
@@ -112,7 +126,7 @@ namespace NORM
         public IList<T> ListExecuteQuery<T>(string command, object parameters) where T : class, new()
         {
             var dt = new DataTable();
-            using (var connection = new SqlConnection(ConnectionString))
+            using (var connection = new SqlConnection(GetConnectionString<T>()))
             {
                 using (var cmd = new SqlCommand(command, connection))
                 {
@@ -143,7 +157,7 @@ namespace NORM
         public IList<T> ListExecuteStoredProc<T>(string procName, object parameters) where T :class, new()
         {
             var dt = new DataTable();
-            using (var connection = new SqlConnection(ConnectionString))
+            using (var connection = new SqlConnection(GetConnectionString<T>()))
             {
                 using (var cmd = new SqlCommand(procName, connection))
                 {

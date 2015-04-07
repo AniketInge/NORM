@@ -30,9 +30,10 @@ namespace NORM
         }
         public NormDbConnection()
         {
-            var connStr = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
-            if(connStr == null) throw new ConfigurationErrorsException("Connection string was not supplied to NORM & NORM could" +
-                                                                       " not find a connection string named 'DefaultConnection' in "+ AppDomain.CurrentDomain.SetupInformation.ConfigurationFile); 
+            var defConnectionStringElem = ConfigurationManager.ConnectionStrings["DefaultConnection"];
+            var connStr =  defConnectionStringElem != null? defConnectionStringElem.ConnectionString :null;
+            //if(connStr == null) throw new ConfigurationErrorsException("Connection string was not supplied to NORM & NORM could" +
+            //                                                           " not find a connection string named 'DefaultConnection' in "+ AppDomain.CurrentDomain.SetupInformation.ConfigurationFile); 
             ApplicationName = "NormApplication";
             sb = new SqlConnectionStringBuilder(connStr);
             sb.ApplicationName = sb.ApplicationName??ApplicationName;

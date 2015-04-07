@@ -2,6 +2,7 @@
 using System.Data;
 using System.Linq;
 using System.Reflection;
+using NORM.Attributes;
 
 namespace NORM.Helpers
 {
@@ -18,7 +19,17 @@ namespace NORM.Helpers
             T item = new T();
             foreach (var property in properties)
             {
-                property.SetValue(item, row[property.Name], null);
+                if (property.GetCustomAttribute(typeof (NormAttribute)) == null)
+                    property.SetValue(item, row[property.Name], null);
+                else
+                {
+                    var normAttr = property.GetCustomAttribute<NormAttribute>();
+                    var columnName = normAttr.ColumnName;
+                    if(string.IsNullOrEmpty(columnName.Trim()))
+                        property.SetValue(item, row[property.Name], null);
+                    else
+                        property.SetValue(item, row[columnName], null);
+                }
             }
             return item;
         }
