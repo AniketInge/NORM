@@ -60,7 +60,7 @@ Similary for **Stored procedures**:
 
     // that's all folks
 
-** Caution !! **
+**Caution !!**
 
 The Domain Model property names *must* match the database result set column names. In cases where that's not feasible, NORM allows you to specify the column name property:
 
