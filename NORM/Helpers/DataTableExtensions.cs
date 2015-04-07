@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace NORM.M1.DbCommand.Helpers
+namespace NORM.Helpers
 {
     public static class DataTableExtensions
     {

@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using NORM.M1.DbCommand.Helpers;
+using NORM.Helpers;
 
-namespace NORM.M1.DbCommand
+namespace NORM
 {
     [Export(typeof(NORM.INormDbCommand))]
     public class NormSqlServerDbCommand : INormDbCommand
