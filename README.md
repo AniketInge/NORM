@@ -60,10 +60,48 @@ Similary for **Stored procedures**:
 
     // that's all folks
 
+** Caution !! **
+
+The Domain Model property names *must* match the database result set column names. In cases where that's not feasible, NORM allows you to specify the column name property:
+
+    class MTLog
+    {
+        public string MTLogId {get;set;}
+        public string UserId {get;set;}
+        public string Sender { get; set; }
+
+        [Norm(ColumnName="ProcessingTime")]
+        public DateTime ProcessTime { get; set; }
+    }
+
 The constructor for `NormDbConnection` takes 0, 1 or 2 arguments.
 
 1) `new NormDbConnection()` assumes there is a connection string named `DefaultConnection` defined in the `.config` file of the assembly.
 Also it sets the application name property while executing the query to `NormApplication`
+
+However, if a connection string or connection name is mentioned for the Domain Model entity like:
+    
+    [NormEntity(Connection="ConnectionName")]
+    class MTLog
+    {
+        public string MTLogId {get;set;}
+        public string UserId {get;set;}
+        public string Sender { get; set; }
+        public DateTime ProcessingTime { get; set; }
+    }
+
+or
+
+    [NormEntity(ConnectionString ="connectionstring")]
+    class MTLog
+    {
+        public string MTLogId {get;set;}
+        public string UserId {get;set;}
+        public string Sender { get; set; }
+        public DateTime ProcessingTime { get; set; }
+    }
+
+then that connection string will be used while executing `Current` object commands.
 
 2) `new NormDbConnection(string connectionString)` accepts a connection string, sets the application name property while executing the query to `NormApplication`
 
