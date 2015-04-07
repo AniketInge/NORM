@@ -54,9 +54,9 @@ To use NORM to map data from DB:
 Similary for **Stored procedures**:
 
     var db = new NormDbConnection();
-    IList<MTLog> logs = db.Current.ListExecuteQuery<MTLog>("SP_NAME", new{@Status="Sent"});
+    IList<MTLog> logs = db.Current.ListExecuteStoredProcedure<MTLog>("SP_NAME", new{@Status="Sent"});
 
-    MTLog firstLog = db.Current.ExecuteQuery<MTLog>("SP_NAME", new{@Status="Sent"});
+    MTLog firstLog = db.Current.ExecuteStoredProcedure<MTLog>("SP_NAME", new{@Status="Sent"});
 
     // that's all folks
 
