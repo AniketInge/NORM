@@ -18,8 +18,6 @@ namespace NORM.M1.DbCommand
 
         /// <summary>
         /// Executes a command and returns the number of rows affected. 
-        /// Example of usage:
-        /// ExecuteNonQuery("update tableName set column=@columnValue where someColumn=@something", new { @columnValue="Value", @someColumn=10});
         /// </summary>
         /// <param name="command">SQL Command</param>
         /// <param name="parameters">Parameters for SQL Command</param>
