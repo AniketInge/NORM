@@ -2,7 +2,7 @@
 
 **Nano ORM**: A simple, lightweight, easy to use, easy to understand ORM for .NET 4.5 and above
 
-Features of Nano ORM:
+Features of NORM:
 -----------------------
 1) It is simple to understand and use
 
