@@ -44,6 +44,8 @@
   <ItemGroup>
     <Compile Include="Attributes\NormAttribute.cs" />
     <Compile Include="Attributes\NormEntityAttribute.cs" />
+    <Compile Include="Attributes\PrimaryKeyAttribute.cs" />
+    <Compile Include="Extensions\ClsINormDbCommandExtensions.cs" />
     <Compile Include="Helpers\DataTableExtensions.cs" />
     <Compile Include="INormDbCommand.cs" />
     <Compile Include="NormDbCommand.cs" />

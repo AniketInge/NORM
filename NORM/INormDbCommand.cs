@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -16,6 +17,9 @@ namespace NORM
         IList<T> ListExecuteQuery<T>(string command, object parameters) where T :class, new();
         IList<T> ListExecuteStoredProc<T>(string procName, object parameters) where T : class, new();
 
+        DataTable ExecuteQuery_DT<T>(string command, object parameters) where T : class, new();
+
+        DataTable ExecuteStoredProc_DT<T>(string procName, object parameters) where T : class, new(); 
         string ConnectionString { get; set; }
     }
 }
