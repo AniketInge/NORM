@@ -12,6 +12,9 @@ Features of NORM:
 
 Usage:
 -------
+NORM can be installed in any project via Nuget Package Manager using the command
+
+    PM > Install-Package LostProtocol.NORM
 
 NORM can map data from a query as well as a stored procedure.
 
