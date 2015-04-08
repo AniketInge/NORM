@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Data;
 using System.Data.SqlClient;
@@ -13,10 +14,10 @@ namespace NORM
     public class NormSqlServerDbCommand : INormDbCommand
     {
         public NormSqlServerDbCommand() { }
-
+        private static readonly object SyncRoot = new object();
         private string GetConnectionString<T>()
         {
-            var normEntityAttr = typeof (T).GetCustomAttribute<NormEntityAttribute>();
+            var normEntityAttr = typeof(T).GetCustomAttribute<NormEntityAttribute>();
             if (normEntityAttr != null)
             {
                 if (!string.IsNullOrEmpty(normEntityAttr.ConnectionString))
@@ -39,15 +40,28 @@ namespace NORM
             {
                 using (var cmd = new SqlCommand(command))
                 {
-                    cmd.CommandTimeout = int.MaxValue;
-
-                    var properties = parameters.GetType().GetProperties();
-                    foreach (var property in properties)
+                    try
                     {
-                        cmd.Parameters.AddWithValue("@" + property.Name, property.GetValue(parameters));
+                        cmd.CommandTimeout = int.MaxValue;
+
+                        var properties = parameters.GetType().GetProperties();
+                        foreach (var property in properties)
+                        {
+                            cmd.Parameters.AddWithValue("@" + property.Name, property.GetValue(parameters));
+                        }
+                        connection.Open();
+                        numberOfRowsAffected = cmd.ExecuteNonQuery();
                     }
-                    connection.Open();
-                    numberOfRowsAffected = cmd.ExecuteNonQuery();
+                    finally
+                    {
+                        if (connection.State != ConnectionState.Closed)
+                        {
+                            lock (SyncRoot)
+                            {
+                                connection.Close();
+                            }
+                        }
+                    }
                 }
             }
             return numberOfRowsAffected;
@@ -67,16 +81,29 @@ namespace NORM
             {
                 using (var cmd = new SqlCommand(command, connection))
                 {
-                    cmd.CommandTimeout = int.MaxValue;
-
-                    var properties = parameters.GetType().GetProperties();
-                    foreach (var property in properties)
+                    try
                     {
-                        cmd.Parameters.AddWithValue("@"+property.Name, property.GetValue(parameters));
+                        cmd.CommandTimeout = int.MaxValue;
+
+                        var properties = parameters.GetType().GetProperties();
+                        foreach (var property in properties)
+                        {
+                            cmd.Parameters.AddWithValue("@" + property.Name, property.GetValue(parameters));
+                        }
+                        connection.Open();
+                        var reader = cmd.ExecuteReader();
+                        dt.Load(reader);
                     }
-                    connection.Open();
-                    var reader = cmd.ExecuteReader();
-                    dt.Load(reader);
+                    finally
+                    {
+                        if (connection.State != ConnectionState.Closed)
+                        {
+                            lock (SyncRoot)
+                            {
+                                connection.Close();
+                            }
+                        }
+                    }
                 }
             }
 
@@ -91,24 +118,38 @@ namespace NORM
         /// <param name="procName">Stored Procedure Name</param>
         /// <param name="parameters">Parameters for the stored procedure</param>
         /// <returns>First row from result set or default(T)</returns>
-        public T ExecuteStoredProc<T>(string procName, object parameters) where T :class, new()
+        public T ExecuteStoredProc<T>(string procName, object parameters) where T : class, new()
         {
             var dt = new DataTable();
             using (var connection = new SqlConnection(GetConnectionString<T>()))
             {
                 using (var cmd = new SqlCommand(procName, connection))
                 {
-                    cmd.CommandTimeout = int.MaxValue;
-                    cmd.CommandType = CommandType.StoredProcedure;
-
-                    var properties = parameters.GetType().GetProperties();
-                    foreach (var property in properties)
+                    try
                     {
-                        cmd.Parameters.AddWithValue("@" + property.Name, property.GetValue(parameters));
+                        cmd.CommandTimeout = int.MaxValue;
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        var properties = parameters.GetType().GetProperties();
+                        foreach (var property in properties)
+                        {
+                            cmd.Parameters.AddWithValue("@" + property.Name, property.GetValue(parameters));
+                        }
+
+                        connection.Open();
+                        var reader = cmd.ExecuteReader();
+                        dt.Load(reader);
                     }
-                    connection.Open();
-                    var reader = cmd.ExecuteReader();
-                    dt.Load(reader);
+                    finally
+                    {
+                        if (connection.State != ConnectionState.Closed)
+                        {
+                            lock (SyncRoot)
+                            {
+                                connection.Close();
+                            }
+                        }
+                    }
                 }
             }
 
@@ -130,16 +171,29 @@ namespace NORM
             {
                 using (var cmd = new SqlCommand(command, connection))
                 {
-                    cmd.CommandTimeout = int.MaxValue;
-
-                    var properties = parameters.GetType().GetProperties();
-                    foreach (var property in properties)
+                    try
                     {
-                        cmd.Parameters.AddWithValue("@" + property.Name, property.GetValue(parameters));
+                        cmd.CommandTimeout = int.MaxValue;
+
+                        var properties = parameters.GetType().GetProperties();
+                        foreach (var property in properties)
+                        {
+                            cmd.Parameters.AddWithValue("@" + property.Name, property.GetValue(parameters));
+                        }
+                        connection.Open();
+                        var reader = cmd.ExecuteReader();
+                        dt.Load(reader);
                     }
-                    connection.Open();
-                    var reader = cmd.ExecuteReader();
-                    dt.Load(reader);
+                    finally
+                    {
+                        if (connection.State != ConnectionState.Closed)
+                        {
+                            lock (SyncRoot)
+                            {
+                                connection.Close();
+                            }
+                        }
+                    }
                 }
             }
 
@@ -154,24 +208,37 @@ namespace NORM
         /// <param name="procName">Stored Procedure Name</param>
         /// <param name="parameters">Parameters for the stored procedure</param>
         /// <returns>List of T</returns>
-        public IList<T> ListExecuteStoredProc<T>(string procName, object parameters) where T :class, new()
+        public IList<T> ListExecuteStoredProc<T>(string procName, object parameters) where T : class, new()
         {
             var dt = new DataTable();
             using (var connection = new SqlConnection(GetConnectionString<T>()))
             {
                 using (var cmd = new SqlCommand(procName, connection))
                 {
-                    cmd.CommandTimeout = int.MaxValue;
-                    cmd.CommandType = CommandType.StoredProcedure;
-
-                    var properties = parameters.GetType().GetProperties();
-                    foreach (var property in properties)
+                    try
                     {
-                        cmd.Parameters.AddWithValue("@" + property.Name, property.GetValue(parameters));
+                        cmd.CommandTimeout = int.MaxValue;
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        var properties = parameters.GetType().GetProperties();
+                        foreach (var property in properties)
+                        {
+                            cmd.Parameters.AddWithValue("@" + property.Name, property.GetValue(parameters));
+                        }
+                        connection.Open();
+                        var reader = cmd.ExecuteReader();
+                        dt.Load(reader);
                     }
-                    connection.Open();
-                    var reader = cmd.ExecuteReader();
-                    dt.Load(reader);
+                    finally
+                    {
+                        if (connection.State != ConnectionState.Closed)
+                        {
+                            lock (SyncRoot)
+                            {
+                                connection.Close();
+                            }
+                        }
+                    }
                 }
             }
 
